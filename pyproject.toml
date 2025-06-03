@@ -1,6 +1,6 @@
 [project]
 name = "mm-print"
-version = "0.0.1"
+version = "0.0.2"
 description = "Enhanced printing library with rich formatting support."
 keywords = []
 requires-python = ">=3.13"
