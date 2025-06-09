@@ -1,14 +1,10 @@
 [project]
 name = "mm-print"
-version = "0.0.2"
+version = "0.0.3"
 description = "Enhanced printing library with rich formatting support."
 keywords = []
 requires-python = ">=3.13"
-dependencies = ["rich>=14.0.0"]
-
-[project.optional-dependencies]
-pydantic = ["pydantic~=2.11.5"]
-mm-result = ["mm-result~=0.0.2"]
+dependencies = ["mm-std~=0.5.0", "rich>=14.0.0"]
 
 [build-system]
 requires = ["hatchling"]

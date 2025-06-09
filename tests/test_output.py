@@ -75,7 +75,7 @@ class TestPrintJson:
             return f"serialized: {obj}"
 
         test_data = {"obj": CustomObject()}
-        print_json(test_data, default_serializer=custom_serializer)
+        print_json(test_data, type_handlers={CustomObject: custom_serializer})
 
         captured = capsys.readouterr()
         output = captured.out

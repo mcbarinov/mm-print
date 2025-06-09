@@ -3,11 +3,10 @@ from collections.abc import Callable
 from typing import Any, NoReturn
 
 import rich
+from mm_std import json_dumps
 from rich.console import Console
 from rich.syntax import Syntax
 from rich.table import Table
-
-from .serialization import to_json
 
 
 def fatal(message: str, code: int = 1) -> NoReturn:
@@ -21,9 +20,9 @@ def print_plain(messages: object) -> None:
     print(messages)  # noqa: T201
 
 
-def print_json(data: object, default_serializer: Callable[[object], str] | None = None) -> None:
+def print_json(data: object, type_handlers: dict[type[Any], Callable[[Any], Any]] | None = None) -> None:
     """Print object as formatted JSON."""
-    rich.print_json(to_json(data, default=default_serializer))
+    rich.print_json(json_dumps(data, type_handlers=type_handlers))
 
 
 def print_table(title: str, columns: list[str], rows: list[list[Any]]) -> None:
