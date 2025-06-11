@@ -9,14 +9,14 @@ Enhanced printing library with rich formatting support.
 ## Quick Start
 
 ```python
-from mm_print import print_json, print_table, pretty_print_toml
+import mm_print
 
 # Pretty print JSON
 data = {"name": "John", "age": 30, "active": True}
-print_json(data)
+mm_print.json(data)
 
 # Create beautiful tables
-print_table(
+mm_print.table(
     title="Users",
     columns=["Name", "Age", "City"],
     rows=[
@@ -31,31 +31,31 @@ toml_config = """
 host = "localhost"
 port = 5432
 """
-pretty_print_toml(toml_config)
+mm_print.toml(toml_config)
 ```
 
 ## API Reference
 
-### `print_plain(*messages)`
+### `mm_print.plain(*messages)`
 
 Print messages to stdout without any formatting.
 
 ```python
-from mm_print import print_plain
+import mm_print
 
-print_plain("Hello, world!")
-print_plain(42)
+mm_print.plain("Hello, world!")
+mm_print.plain(42)
 ```
 
-### `print_json(data, type_handlers=None)`
+### `mm_print.json(data, type_handlers=None)`
 
 Print objects as beautifully formatted JSON with syntax highlighting.
 
 ```python
-from mm_print import print_json
+import mm_print
 
 # Basic usage
-print_json({"key": "value", "number": 42})
+mm_print.json({"key": "value", "number": 42})
 
 # With custom type handlers
 class CustomObject:
@@ -66,17 +66,17 @@ def serialize_custom(obj):
     return {"custom_value": obj.value}
 
 data = {"obj": CustomObject("test")}
-print_json(data, type_handlers={CustomObject: serialize_custom})
+mm_print.json(data, type_handlers={CustomObject: serialize_custom})
 ```
 
-### `print_table(title, columns, rows)`
+### `mm_print.table(title, columns, rows)`
 
 Create and print formatted tables with rich styling.
 
 ```python
-from mm_print import print_table
+import mm_print
 
-print_table(
+mm_print.table(
     title="Sales Report",
     columns=["Product", "Quantity", "Revenue"],
     rows=[
@@ -87,12 +87,12 @@ print_table(
 )
 ```
 
-### `pretty_print_toml(data, line_numbers=False, theme="monokai")`
+### `mm_print.toml(data, line_numbers=False, theme="monokai")`
 
 Print TOML with syntax highlighting and optional line numbers.
 
 ```python
-from mm_print import pretty_print_toml
+import mm_print
 
 toml_content = """
 [server]
@@ -105,31 +105,31 @@ max_connections = 20
 """
 
 # Basic usage
-pretty_print_toml(toml_content)
+mm_print.toml(toml_content)
 
 # With line numbers and custom theme
-pretty_print_toml(toml_content, line_numbers=True, theme="github")
+mm_print.toml(toml_content, line_numbers=True, theme="github")
 ```
 
-### `fatal(message, code=1)`
+### `mm_print.fatal(message, code=1)`
 
 Print error message to stderr and exit with specified code.
 
 ```python
-from mm_print import fatal
+import mm_print
 
 # Exit with code 1
-fatal("Configuration file not found!")
+mm_print.fatal("Configuration file not found!")
 
 # Exit with custom code
-fatal("Database connection failed", code=2)
+mm_print.fatal("Database connection failed", code=2)
 ```
 
 ## Examples
 
 ### Configuration Display
 ```python
-from mm_print import print_json, print_table, pretty_print_toml
+import mm_print
 
 # Display config as JSON
 config = {
@@ -137,7 +137,7 @@ config = {
     "version": "1.0.0",
     "features": ["auth", "api", "web"]
 }
-print_json(config)
+mm_print.json(config)
 
 # Show database connections as table
 connections = [
@@ -145,19 +145,19 @@ connections = [
     ["Cache", "redis://localhost:6379/0", "active"],
     ["Analytics", "clickhouse://localhost:8123/stats", "inactive"],
 ]
-print_table("Database Connections", ["Name", "URL", "Status"], connections)
+mm_print.table("Database Connections", ["Name", "URL", "Status"], connections)
 ```
 
 ### Error Handling
 ```python
-from mm_print import fatal, print_json
+import mm_print
 
 try:
     result = risky_operation()
-    print_json({"status": "success", "result": result})
+    mm_print.json({"status": "success", "result": result})
 except FileNotFoundError:
-    fatal("Required configuration file not found")
+    mm_print.fatal("Required configuration file not found")
 except Exception as e:
-    print_json({"status": "error", "error": str(e)})
-    fatal("Operation failed", code=1)
+    mm_print.json({"status": "error", "error": str(e)})
+    mm_print.fatal("Operation failed", code=1)
 ```

@@ -1,11 +1,5 @@
-"""mm-print - Enhanced printing library."""
-
-from .output import fatal, pretty_print_toml, print_json, print_plain, print_table
-
-__all__ = [
-    "fatal",
-    "pretty_print_toml",
-    "print_json",
-    "print_plain",
-    "print_table",
-]
+from .output import fatal as fatal
+from .output import pretty_print_toml as toml  # noqa: F401
+from .output import print_json as json  # noqa: F401
+from .output import print_plain as plain  # noqa: F401
+from .output import print_table as table  # noqa: F401
