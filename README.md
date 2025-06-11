@@ -26,12 +26,13 @@ mm_print.table(
 )
 
 # Syntax highlighted TOML
-toml_config = """
-[database]
-host = "localhost"
-port = 5432
-"""
-mm_print.toml(toml_config)
+config = {
+    "database": {
+        "host": "localhost",
+        "port": 5432
+    }
+}
+mm_print.toml(data=config)
 ```
 
 ## API Reference
@@ -87,13 +88,14 @@ mm_print.table(
 )
 ```
 
-### `mm_print.toml(data, line_numbers=False, theme="monokai")`
+### `mm_print.toml(*, toml=None, data=None, line_numbers=False, theme="monokai")`
 
-Print TOML with syntax highlighting and optional line numbers.
+Print TOML with syntax highlighting. Either `toml` string or `data` object must be provided.
 
 ```python
 import mm_print
 
+# From TOML string
 toml_content = """
 [server]
 host = "0.0.0.0"
@@ -103,12 +105,17 @@ port = 8080
 url = "postgresql://localhost/mydb"
 max_connections = 20
 """
+mm_print.toml(toml=toml_content)
 
-# Basic usage
-mm_print.toml(toml_content)
+# From Python object
+config = {
+    "server": {"host": "0.0.0.0", "port": 8080},
+    "database": {"url": "postgresql://localhost/mydb", "max_connections": 20}
+}
+mm_print.toml(data=config)
 
 # With line numbers and custom theme
-mm_print.toml(toml_content, line_numbers=True, theme="github")
+mm_print.toml(toml=toml_content, line_numbers=True, theme="github")
 ```
 
 ### `mm_print.fatal(message, code=1)`

@@ -1,8 +1,9 @@
 import sys
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import Any, NoReturn
 
 import rich
+import tomlkit
 from mm_std import json_dumps
 from rich.console import Console
 from rich.syntax import Syntax
@@ -34,8 +35,26 @@ def print_table(title: str, columns: list[str], rows: list[list[Any]]) -> None:
     console.print(table)
 
 
-def pretty_print_toml(data: str, line_numbers: bool = False, theme: str = "monokai") -> None:
-    """Print TOML with syntax highlighting."""
+def print_toml(
+    *, toml: str | None = None, data: Mapping[str, Any] | None = None, line_numbers: bool = False, theme: str = "monokai"
+) -> None:
+    """Print TOML with syntax highlighting.
+
+    Args:
+        toml: TOML string to print. Either this or data must be provided.
+        data: Object to serialize to TOML. Either this or toml must be provided.
+        line_numbers: Whether to show line numbers.
+        theme: Syntax highlighting theme.
+    """
+    if (toml is None) == (data is None):
+        msg = "Exactly one of 'toml' or 'data' must be provided"
+        raise ValueError(msg)
+
+    toml_string = tomlkit.dumps(data) if data is not None else toml
+    if toml_string is None:
+        msg = "Internal error: toml_string should not be None"
+        raise RuntimeError(msg)
+
     console = Console()
-    syntax = Syntax(data, "toml", theme=theme, line_numbers=line_numbers)
+    syntax = Syntax(toml_string, "toml", theme=theme, line_numbers=line_numbers)
     console.print(syntax)

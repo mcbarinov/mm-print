@@ -1,6 +1,6 @@
 import pytest
 
-from mm_print.output import fatal, pretty_print_toml, print_json, print_plain, print_table
+from mm_print.output import fatal, print_json, print_plain, print_table, print_toml
 
 
 class TestFatal:
@@ -116,13 +116,13 @@ class TestPrintTable:
         assert captured.err == ""
 
 
-class TestPrettyPrintToml:
-    """Tests for pretty_print_toml() function."""
+class TestPrintToml:
+    """Tests for print_toml() function."""
 
-    def test_toml_basic(self, capsys):
-        """Test basic TOML pretty printing with real output."""
+    def test_toml_string_input(self, capsys):
+        """Test TOML printing with string input."""
         toml_data = '[section]\nkey = "value"'
-        pretty_print_toml(toml_data)
+        print_toml(toml=toml_data)
 
         captured = capsys.readouterr()
         output = captured.out
@@ -133,10 +133,10 @@ class TestPrettyPrintToml:
         assert "value" in output
         assert captured.err == ""
 
-    def test_toml_with_options(self, capsys):
-        """Test TOML printing with line numbers and custom theme."""
-        toml_data = '[database]\nserver = "192.168.1.1"'
-        pretty_print_toml(toml_data, line_numbers=True, theme="github")
+    def test_toml_data_input(self, capsys):
+        """Test TOML printing with data input."""
+        data = {"database": {"server": "192.168.1.1", "port": 5432}}
+        print_toml(data=data)
 
         captured = capsys.readouterr()
         output = captured.out
@@ -145,5 +145,28 @@ class TestPrettyPrintToml:
         assert "database" in output
         assert "server" in output
         assert "192.168.1.1" in output
-        # When line_numbers=True, output should contain line numbers
         assert captured.err == ""
+
+    def test_toml_with_options(self, capsys):
+        """Test TOML printing with line numbers and custom theme."""
+        toml_data = '[database]\nserver = "192.168.1.1"'
+        print_toml(toml=toml_data, line_numbers=True, theme="github")
+
+        captured = capsys.readouterr()
+        output = captured.out
+
+        # Check that TOML content appears in output
+        assert "database" in output
+        assert "server" in output
+        assert "192.168.1.1" in output
+        assert captured.err == ""
+
+    def test_toml_requires_exactly_one_param(self):
+        """Test that exactly one of toml or data must be provided."""
+        # Both None
+        with pytest.raises(ValueError, match="Exactly one of 'toml' or 'data' must be provided"):
+            print_toml()
+
+        # Both provided
+        with pytest.raises(ValueError, match="Exactly one of 'toml' or 'data' must be provided"):
+            print_toml(toml="test", data={"key": "value"})
