@@ -10,15 +10,15 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 
-def fatal(message: str, code: int = 1) -> NoReturn:
+def error_exit(message: str, code: int = 1) -> NoReturn:
     """Print error message and exit with code."""
     print(message, file=sys.stderr)  # noqa: T201
     sys.exit(code)
 
 
-def print_plain(messages: object) -> None:
+def print_plain(*messages: object) -> None:
     """Print to stdout without any formatting."""
-    print(messages)  # noqa: T201
+    print(*messages)  # noqa: T201
 
 
 def print_json(data: object, type_handlers: dict[type[Any], Callable[[Any], Any]] | None = None) -> None:
@@ -26,7 +26,7 @@ def print_json(data: object, type_handlers: dict[type[Any], Callable[[Any], Any]
     rich.print_json(json_dumps(data, type_handlers=type_handlers))
 
 
-def print_table(title: str, columns: list[str], rows: list[list[Any]]) -> None:
+def print_table(columns: list[str], rows: list[list[Any]], *, title: str | None = None) -> None:
     """Print data as a formatted table."""
     table = Table(*columns, title=title)
     for row in rows:
@@ -35,25 +35,15 @@ def print_table(title: str, columns: list[str], rows: list[list[Any]]) -> None:
     console.print(table)
 
 
-def print_toml(
-    *, toml: str | None = None, data: Mapping[str, Any] | None = None, line_numbers: bool = False, theme: str = "monokai"
-) -> None:
+def print_toml(content: str | Mapping[str, Any], *, line_numbers: bool = False, theme: str = "monokai") -> None:
     """Print TOML with syntax highlighting.
 
     Args:
-        toml: TOML string to print. Either this or data must be provided.
-        data: Object to serialize to TOML. Either this or toml must be provided.
+        content: TOML string or object to serialize to TOML.
         line_numbers: Whether to show line numbers.
         theme: Syntax highlighting theme.
     """
-    if (toml is None) == (data is None):
-        msg = "Exactly one of 'toml' or 'data' must be provided"
-        raise ValueError(msg)
-
-    toml_string = tomlkit.dumps(data) if data is not None else toml
-    if toml_string is None:
-        msg = "Internal error: toml_string should not be None"
-        raise RuntimeError(msg)
+    toml_string = tomlkit.dumps(content) if isinstance(content, Mapping) else content
 
     console = Console()
     syntax = Syntax(toml_string, "toml", theme=theme, line_numbers=line_numbers)

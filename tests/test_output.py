@@ -1,25 +1,25 @@
 import pytest
 
-from mm_print.output import fatal, print_json, print_plain, print_table, print_toml
+from mm_print.output import error_exit, print_json, print_plain, print_table, print_toml
 
 
-class TestFatal:
-    """Tests for fatal() function."""
+class TestErrorExit:
+    """Tests for error_exit() function."""
 
-    def test_fatal_default_code(self, capsys):
-        """Test fatal with default exit code."""
+    def test_error_exit_default_code(self, capsys):
+        """Test error_exit with default exit code."""
         with pytest.raises(SystemExit) as exc_info:
-            fatal("Test error message")
+            error_exit("Test error message")
 
         assert exc_info.value.code == 1
         captured = capsys.readouterr()
         assert captured.err == "Test error message\n"
         assert captured.out == ""
 
-    def test_fatal_custom_code(self, capsys):
-        """Test fatal with custom exit code."""
+    def test_error_exit_custom_code(self, capsys):
+        """Test error_exit with custom exit code."""
         with pytest.raises(SystemExit) as exc_info:
-            fatal("Custom error", code=42)
+            error_exit("Custom error", code=42)
 
         assert exc_info.value.code == 42
         captured = capsys.readouterr()
@@ -45,6 +45,13 @@ class TestPrintPlain:
         print_plain(None)
         captured = capsys.readouterr()
         assert captured.out == "None\n"
+
+    def test_print_plain_multiple_args(self, capsys):
+        """Test print_plain with multiple arguments."""
+        print_plain("Hello", "world", 42)
+        captured = capsys.readouterr()
+        assert captured.out == "Hello world 42\n"
+        assert captured.err == ""
 
 
 class TestPrintJson:
@@ -97,7 +104,7 @@ class TestPrintTable:
             ["Bob", 25, "London"],
         ]
 
-        print_table(title, columns, rows)
+        print_table(columns, rows, title=title)
 
         captured = capsys.readouterr()
         output = captured.out
@@ -115,6 +122,23 @@ class TestPrintTable:
         assert "London" in output
         assert captured.err == ""
 
+    def test_print_table_without_title(self, capsys):
+        """Test table creation without title."""
+        columns = ["Name", "Age"]
+        rows = [["Alice", 30]]
+
+        print_table(columns, rows)
+
+        captured = capsys.readouterr()
+        output = captured.out
+
+        # Check that table elements are in output
+        assert "Name" in output
+        assert "Age" in output
+        assert "Alice" in output
+        assert "30" in output
+        assert captured.err == ""
+
 
 class TestPrintToml:
     """Tests for print_toml() function."""
@@ -122,7 +146,7 @@ class TestPrintToml:
     def test_toml_string_input(self, capsys):
         """Test TOML printing with string input."""
         toml_data = '[section]\nkey = "value"'
-        print_toml(toml=toml_data)
+        print_toml(toml_data)
 
         captured = capsys.readouterr()
         output = captured.out
@@ -136,7 +160,7 @@ class TestPrintToml:
     def test_toml_data_input(self, capsys):
         """Test TOML printing with data input."""
         data = {"database": {"server": "192.168.1.1", "port": 5432}}
-        print_toml(data=data)
+        print_toml(data)
 
         captured = capsys.readouterr()
         output = captured.out
@@ -150,7 +174,7 @@ class TestPrintToml:
     def test_toml_with_options(self, capsys):
         """Test TOML printing with line numbers and custom theme."""
         toml_data = '[database]\nserver = "192.168.1.1"'
-        print_toml(toml=toml_data, line_numbers=True, theme="github")
+        print_toml(toml_data, line_numbers=True, theme="github")
 
         captured = capsys.readouterr()
         output = captured.out
@@ -160,13 +184,3 @@ class TestPrintToml:
         assert "server" in output
         assert "192.168.1.1" in output
         assert captured.err == ""
-
-    def test_toml_requires_exactly_one_param(self):
-        """Test that exactly one of toml or data must be provided."""
-        # Both None
-        with pytest.raises(ValueError, match="Exactly one of 'toml' or 'data' must be provided"):
-            print_toml()
-
-        # Both provided
-        with pytest.raises(ValueError, match="Exactly one of 'toml' or 'data' must be provided"):
-            print_toml(toml="test", data={"key": "value"})

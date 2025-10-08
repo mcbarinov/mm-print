@@ -17,12 +17,12 @@ mm_print.json(data)
 
 # Create beautiful tables
 mm_print.table(
-    title="Users",
     columns=["Name", "Age", "City"],
     rows=[
         ["Alice", 25, "New York"],
         ["Bob", 30, "London"],
-    ]
+    ],
+    title="Users"
 )
 
 # Syntax highlighted TOML
@@ -32,7 +32,7 @@ config = {
         "port": 5432
     }
 }
-mm_print.toml(data=config)
+mm_print.toml(config)
 ```
 
 ## API Reference
@@ -70,7 +70,7 @@ data = {"obj": CustomObject("test")}
 mm_print.json(data, type_handlers={CustomObject: serialize_custom})
 ```
 
-### `mm_print.table(title, columns, rows)`
+### `mm_print.table(columns, rows, *, title=None)`
 
 Create and print formatted tables with rich styling.
 
@@ -78,19 +78,19 @@ Create and print formatted tables with rich styling.
 import mm_print
 
 mm_print.table(
-    title="Sales Report",
     columns=["Product", "Quantity", "Revenue"],
     rows=[
         ["Widget A", 150, "$1,500.00"],
         ["Widget B", 89, "$890.00"],
         ["Widget C", 200, "$2,000.00"],
-    ]
+    ],
+    title="Sales Report"
 )
 ```
 
-### `mm_print.toml(*, toml=None, data=None, line_numbers=False, theme="monokai")`
+### `mm_print.toml(content, *, line_numbers=False, theme="monokai")`
 
-Print TOML with syntax highlighting. Either `toml` string or `data` object must be provided.
+Print TOML with syntax highlighting. Accepts either a TOML string or a Python object to serialize.
 
 ```python
 import mm_print
@@ -105,20 +105,20 @@ port = 8080
 url = "postgresql://localhost/mydb"
 max_connections = 20
 """
-mm_print.toml(toml=toml_content)
+mm_print.toml(toml_content)
 
 # From Python object
 config = {
     "server": {"host": "0.0.0.0", "port": 8080},
     "database": {"url": "postgresql://localhost/mydb", "max_connections": 20}
 }
-mm_print.toml(data=config)
+mm_print.toml(config)
 
 # With line numbers and custom theme
-mm_print.toml(toml=toml_content, line_numbers=True, theme="github")
+mm_print.toml(toml_content, line_numbers=True, theme="github")
 ```
 
-### `mm_print.fatal(message, code=1)`
+### `mm_print.error_exit(message, code=1)`
 
 Print error message to stderr and exit with specified code.
 
@@ -126,10 +126,10 @@ Print error message to stderr and exit with specified code.
 import mm_print
 
 # Exit with code 1
-mm_print.fatal("Configuration file not found!")
+mm_print.error_exit("Configuration file not found!")
 
 # Exit with custom code
-mm_print.fatal("Database connection failed", code=2)
+mm_print.error_exit("Database connection failed", code=2)
 ```
 
 ## Examples
@@ -152,7 +152,7 @@ connections = [
     ["Cache", "redis://localhost:6379/0", "active"],
     ["Analytics", "clickhouse://localhost:8123/stats", "inactive"],
 ]
-mm_print.table("Database Connections", ["Name", "URL", "Status"], connections)
+mm_print.table(["Name", "URL", "Status"], connections, title="Database Connections")
 ```
 
 ### Error Handling
@@ -163,8 +163,8 @@ try:
     result = risky_operation()
     mm_print.json({"status": "success", "result": result})
 except FileNotFoundError:
-    mm_print.fatal("Required configuration file not found")
+    mm_print.error_exit("Required configuration file not found")
 except Exception as e:
     mm_print.json({"status": "error", "error": str(e)})
-    mm_print.fatal("Operation failed", code=1)
+    mm_print.error_exit("Operation failed", code=1)
 ```
