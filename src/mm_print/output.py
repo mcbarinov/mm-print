@@ -10,7 +10,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 
-def error_exit(message: str, code: int = 1) -> NoReturn:
+def exit_with_error(message: str, code: int = 1) -> NoReturn:
     """Print error message and exit with code."""
     print(message, file=sys.stderr)  # noqa: T201
     sys.exit(code)

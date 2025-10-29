@@ -1,25 +1,25 @@
 import pytest
 
-from mm_print.output import error_exit, print_json, print_plain, print_table, print_toml
+from mm_print.output import exit_with_error, print_json, print_plain, print_table, print_toml
 
 
-class TestErrorExit:
-    """Tests for error_exit() function."""
+class TestExitWithError:
+    """Tests for exit_with_error() function."""
 
-    def test_error_exit_default_code(self, capsys):
-        """Test error_exit with default exit code."""
+    def test_exit_with_error_default_code(self, capsys):
+        """Test exit_with_error with default exit code."""
         with pytest.raises(SystemExit) as exc_info:
-            error_exit("Test error message")
+            exit_with_error("Test error message")
 
         assert exc_info.value.code == 1
         captured = capsys.readouterr()
         assert captured.err == "Test error message\n"
         assert captured.out == ""
 
-    def test_error_exit_custom_code(self, capsys):
-        """Test error_exit with custom exit code."""
+    def test_exit_with_error_custom_code(self, capsys):
+        """Test exit_with_error with custom exit code."""
         with pytest.raises(SystemExit) as exc_info:
-            error_exit("Custom error", code=42)
+            exit_with_error("Custom error", code=42)
 
         assert exc_info.value.code == 42
         captured = capsys.readouterr()
