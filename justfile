@@ -16,6 +16,7 @@ test:
 
 lint: format pre-commit
     uv run ruff check src tests
+    uv run ty check
     uv run mypy src
 
 audit:

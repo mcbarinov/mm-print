@@ -1,10 +1,10 @@
 [project]
 name = "mm-print"
-version = "0.2.2"
+version = "0.2.3"
 description = "Enhanced printing library with rich formatting support."
 keywords = []
-requires-python = ">=3.13"
-dependencies = ["mm-std~=0.6.0", "rich~=14.2.0", "tomlkit~=0.13.0"]
+requires-python = ">=3.14"
+dependencies = ["mm-std~=0.6.0", "rich~=14.2.0", "tomlkit~=0.14.0"]
 
 [build-system]
 requires = ["hatchling"]
@@ -14,22 +14,23 @@ build-backend = "hatchling.build"
 dev = [
     "pytest~=9.0.2",
     "pytest-xdist~=3.8.0",
-    "ruff~=0.14.10",
+    "ruff~=0.14.13",
     "mypy~=1.19.1",
     "pip-audit~=2.10.0",
     "bandit~=1.9.2",
     "pre-commit~=4.5.1",
+    "ty~=0.0.12",
 ]
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 warn_no_return = false
 strict = true
 exclude = ["^tests/", "^tmp/"]
 
 [tool.ruff]
 line-length = 130
-target-version = "py313"
+target-version = "py314"
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
@@ -64,6 +65,13 @@ classmethod-decorators = ["field_validator"]
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[tool.ty.environment]
+python-version = "3.14"
+[[tool.ty.overrides]]
+include = ["tests/**"]
+[tool.ty.overrides.rules]
+possibly-missing-attribute = "ignore"
 
 [tool.bandit]
 exclude_dirs = ["tests"]
